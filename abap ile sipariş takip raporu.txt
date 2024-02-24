@@ -1,0 +1,49 @@
+1.	REPORT ZSIPARIS_DURUMU_RAPORU.
+2.	
+3.	TABLES: MARA.
+4.	
+5.	PARAMETERS: pv_ernam TYPE MARA-ERNAM,
+6.	            pv_ersda TYPE MARA-ERSDA,
+7.	            pv_matnr TYPE MARA-MATNR.
+8.	
+9.	SELECT-OPTIONS: so_ersda FOR MARA-ERSDA,
+10.	                so_matnr FOR MARA-MATNR.
+11.	
+12.	DATA: lt_sonuc TYPE TABLE OF MARA,
+13.	      lv_where_kosulu TYPE string,
+14.	      ls_sonuc TYPE MARA.
+15.	
+16.	START-OF-SELECTION.
+17.	
+18.	CONCATENATE 'WHERE' INTO lv_where_kosulu.
+19.	
+20.	IF pv_ernam IS NOT INITIAL.
+21.	  CONCATENATE lv_where_kosulu 'ERNAM =' pv_ernam INTO lv_where_kosulu SEPARATED BY ' AND '.
+22.	ENDIF.
+23.	
+24.	IF pv_ersda IS NOT INITIAL.
+25.	  CONCATENATE lv_where_kosulu 'ERSDA =' pv_ersda INTO lv_where_kosulu SEPARATED BY ' AND '.
+26.	ENDIF.
+27.	
+28.	IF pv_matnr IS NOT INITIAL.
+29.	  CONCATENATE lv_where_kosulu 'MATNR =' pv_matnr INTO lv_where_kosulu SEPARATED BY ' AND '.
+30.	ENDIF.
+31.	
+32.	IF NOT so_ersda[] IS INITIAL.
+33.	  CONCATENATE lv_where_kosulu 'ERSDA IN' so_ersda INTO lv_where_kosulu SEPARATED BY ','.
+34.	ENDIF.
+35.	
+36.	IF NOT so_matnr[] IS INITIAL.
+37.	  CONCATENATE lv_where_kosulu 'MATNR IN' so_matnr INTO lv_where_kosulu SEPARATED BY ','.
+38.	ENDIF.
+39.	
+40.	SELECT ERNAM ERSDA MATNR
+41.	  INTO TABLE lt_sonuc
+42.	  FROM MARA
+43.	  WHERE (lv_where_kosulu).
+44.	
+45.	LOOP AT lt_sonuc INTO ls_sonuc.
+46.	  WRITE: / 'ERNAM:', ls_sonuc-ERNAM,
+47.	         'ERSDA:', ls_sonuc-ERSDA,
+48.	         'MATNR:', ls_sonuc-MATNR.
+49.	ENDLOOP.
